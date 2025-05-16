@@ -1,0 +1,18 @@
+runtime: go123
+instance_class: F2
+env: standard 
+
+runtime_config:
+  operating_system: "ubuntu22"
+
+includes:
+  - env_variables_prod.yaml
+service: default 
+
+handlers:
+- url: /robots.txt # required as robots.txt must be at the root
+  static_files: internal/web/dist/robots.txt
+  upload: internal/web/dist/robots.txt
+
+- url: /.* # handle all requests
+  script: auto

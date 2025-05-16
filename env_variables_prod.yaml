@@ -1,0 +1,8 @@
+# Included in app.yaml. This variables will be loaded in the app engine environment.
+env_variables:
+  ENV: PROD
+  HOST: localhost
+  PORT: 8080
+  PUBLIC_FILES_PATH: ./internal/web/dist/
+  INTERNAL_HOSTS: appspot.com 
+  GTAG: GOOGLE_ANALYTICS_MEASUREMENT_ID 

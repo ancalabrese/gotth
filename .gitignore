@@ -1,0 +1,49 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env files
+.env
+.env.*
+
+# Build folder
+build
+
+#credentials
+creds
+
+#templ tmp
+tmp
+
+#templ txt files
+**/*_templ.txt
+
+#tmepl compiled go files
+**/*_templ.go
+
+#node modules
+internal/web/node_modules
+
+# web distribution static file
+internal/web/dist
+
+# prod secrets
+env_variables_prod.yml
+
+#Google Cloud
+.gcloudignore
+
+**/*.DS_Store
