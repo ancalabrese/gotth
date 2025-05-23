@@ -1,8 +1,8 @@
 GCP_ID:= GOOGLE_CLOUD_PROJECT_ID
 BIN_FOLDER := ./build
-BIN_NAME := gotth 
+BIN_NAME := BIN_NAME 
 BIN_PATH := $(BIN_FOLDER)/$(BIN_NAME)
-MAIN:=main.go
+MAIN:= MAIN_FILE_DOT_GO
 MAIN_PATH:= ./$(MAIN)
 
 clean:
@@ -36,11 +36,11 @@ live/server:
 
 # Run tailwindcss to generate the styles.css bundle in watch mode.
 live/tailwind:
-	npx @tailwindcss/cli -i ./internal/web/tailwind.css -o ./internal/web/dist/style.css --minify --watch
+	npx @tailwindcss/cli -i ./static/tailwind.css -o ./static/dist/style.css --minify --watch
 
 # Generates the style.css file
 build/tailwind:
-	tailwindcss -i ./internal/web/tailwind.css -o ./internal/web/dist/style.css --minify
+	tailwindcss -i ./static/tailwind.css -o ./static/dist/style.css --minify
 
 # Run templ generation in watch mode to detect all .templ files and 
 # re-create _templ.txt files on change, then send reload event to browser. 

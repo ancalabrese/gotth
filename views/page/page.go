@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/ancalabrese/gotth/internal/views/components/head"
+	"github.com/ancalabrese/gotth/views/components/head"
 )
 
 type WebPage struct {
