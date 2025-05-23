@@ -1,8 +1,6 @@
 // Package head provides view models and components for HTML head section.
 package head
 
-import "strings"
-
 // HeadViewModel is the primary model for the Head templ component.
 // Instantiate via NewHeadViewModel and functional options.
 type HeadViewModel struct {
