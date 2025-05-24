@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
-	"github.com/ancalabrese/gotth/internal/views/components/head"
-	"github.com/ancalabrese/gotth/page"
+	"github.com/ancalabrese/gotth/views/components/head"
+	"github.com/ancalabrese/gotth/views/page"
 )
 
 type StaticAssetFS struct {
@@ -85,27 +85,38 @@ func New(cfg WebServerConfig, s *http.Server) (*WebServer, error) {
 }
 
 // RegisterPage adds a page to be served.
-func (ws *WebServer) RegisterPage(page page.WebPage) {
-	if page.Path == "" || page.Content == nil {
-		fmt.Printf("Skipping registration of page with empty path or content\n")
+func (ws *WebServer) RegisterPage(p page.WebPage) {
+	if p.Path == "" || p.ContentProvider == nil {
+		fmt.Printf("Skipping registration of page with empty path or no ContentProvider\n")
 		return
 	}
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		headVM, pageContent, err := p.ContentProvider(r)
+		if err != nil {
+			// TODO: Handle the error appropriately (e.g., log it, show a generic error page)
+			// allow the ContentProviderFunc to also suggest an HTTP status code
+			fmt.Fprintf(os.Stderr, "Error in ContentProvider for %s: %v\n", p.Path, err)
+			return
+		}
+
 		// Create the full page component by wrapping the page's content with the base layout
-		fullPageComponent := ws.config.Layout(page.Metadata, page.Content)
+		fullPageComponent := ws.config.Layout(headVM, pageContent)
 
 		// Set content type and render
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		err := fullPageComponent.Render(r.Context(), w) // Pass request context
+		err = fullPageComponent.Render(r.Context(), w) // Pass request context
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error rendering page %s: %v\n", page.Path, err)
+			fmt.Fprintf(os.Stderr, "Error rendering page %s: %v\n", p.Path, err)
+			// On rendering error return HTTP error. Any other error should be an error message
+			// in the rendered page. TODO: better error handling
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
 		}
 	})
 
-	fmt.Printf("Registering page at path: %s\n", page.Path)
-	ws.mux.Handle(page.Path, handler)
+	fmt.Printf("Registering page at path: %s\n", p.Path)
+	ws.mux.Handle(p.Path, handler)
 }
 
 // RegisterPages registers multiple pages.

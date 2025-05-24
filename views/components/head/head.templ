@@ -3,150 +3,149 @@ package head
 import "strings"
 
 templ Head(vm HeadViewModel) {
-
-<head>
-	<meta charset="UTF-8" />
-	// Viewport (default is set in Go by NewHeadViewModel)
-	<meta name="viewport" content={ vm.Metadata.ViewPort } />
-	// Title (essential, should be set via options in Go)
-	if vm.Metadata.Title != "" {
-	<title>{ vm.Metadata.Title }</title>
-	}
-	// Application Name
-	if vm.Name != "" {
-	<meta name="application-name" content={ vm.Name } />
-	}
-	// Author (optional)
-	if vm.Metadata.Author != "" {
-	<meta name="author" content={ vm.Metadata.Author } />
-	}
-	// Description (essential, should be set via options in Go)
-	if vm.Metadata.Description != "" {
-	<meta name="description" content={ vm.Metadata.Description } />
-	}
-	// Keywords (optional)
-	if len(vm.Metadata.Keywords) > 0 {
-	<meta name="keywords" content={ strings.Join(vm.Metadata.Keywords, ", " ) } />
-	}
-	// Referrer Policy
-	<meta name="referrer" content="strict-origin" /> // A common, secure default
-	// Canonical URL (essential, should be set via options in Go)
-	if vm.Metadata.URL != "" {
-	<link rel="canonical" href={ vm.Metadata.URL } />
-	}
-	// Favicon (optional)
-	if vm.FaviconPath != "" && vm.FaviconType != "" {
-	<link rel="icon" type={ vm.FaviconType } href={ vm.FaviconPath } />
-	}
-	// Apple Touch Icon (optional)
-	if vm.AppleTouchIconPath != "" {
-	<link rel="apple-touch-icon" href={ vm.AppleTouchIconPath } />
-	}
-	// Themeing (optional, defaults might be absent or set by OS/browser)
-	if vm.ThemeColor != "" {
-	<meta name="theme-color" content={ vm.ThemeColor } />
-	}
-	if vm.AppleStatusBarColor != "" {
-	<meta name="apple-mobile-web-app-status-bar-style" content={ vm.AppleStatusBarColor } />
-	}
-	if vm.ColorScheme != "" {
-	<meta name="color-scheme" content={ vm.ColorScheme } />
-	}
-	// --- Basic Schema.org itemprop (can supplement JSON-LD) ---
-	if vm.Metadata.Title != "" {
-	<meta itemprop="name" content={ vm.Metadata.Title } />
-	}
-	if vm.Metadata.Description != "" {
-	<meta itemprop="description" content={ vm.Metadata.Description } />
-	}
-	if vm.Metadata.SchemaImageURL != "" {
-	<meta itemprop="image" content={ vm.Metadata.SchemaImageURL } />
-	}
-	// --- Microsoft Specific ---
-	<meta http-equiv="x-ua-compatible" content="ie=edge" />
-	// MsStartURL has a default ("/") set in NewHeadViewModel
-	<meta name="msapplication-starturl" content={ vm.MsStartURL } />
-	if vm.Name != "" {
-	// Tooltip defaults to application name
-	<meta name="msapplication-tooltip" content={ vm.Name } />
-	}
-	if vm.MsTileColor != "" {
-	<meta name="msapplication-TileColor" content={ vm.MsTileColor } />
-	}
-	if vm.MsBrowserConfigPath != "" {
-	<meta name="msapplication-config" content={ vm.MsBrowserConfigPath } />
-	}
-	// --- Facebook Open Graph ---
-	// OgType and OgLocale have defaults set in NewHeadViewModel.
-	// OgURL, OgTitle, OgDescription, OgImage have fallbacks handled in NewHeadViewModel.
-	<meta property="og:type" content={ vm.OgType } />
-	<meta property="og:locale" content={ vm.OgLocale } />
-	if vm.Metadata.OgURL != "" {
-	<meta property="og:url" content={ vm.Metadata.OgURL } />
-	}
-	if vm.Metadata.OgTitle != "" {
-	<meta property="og:title" content={ vm.Metadata.OgTitle } />
-	}
-	if vm.Metadata.OgDescription != "" {
-	<meta property="og:description" content={ vm.Metadata.OgDescription } />
-	}
-	if vm.Metadata.OgImage != "" {
-	<meta property="og:image" content={ vm.Metadata.OgImage } />
-	if vm.Metadata.OgImageWidth != "" {
-	<meta property="og:image:width" content={ vm.Metadata.OgImageWidth } />
-	}
-	if vm.Metadata.OgImageHeight != "" {
-	<meta property="og:image:height" content={ vm.Metadata.OgImageHeight } />
-	}
-	if vm.Metadata.OgImageAlt != "" {
-	<meta property="og:image:alt" content={ vm.Metadata.OgImageAlt } />
-	}
-	}
-	if vm.Name != "" {
-	// OG Site Name
-	<meta property="og:site_name" content={ vm.Name } />
-	}
-	// --- Twitter Card ---
-	// TwitterCardType has a default set in NewHeadViewModel.
-	// Twitter URL, Title, Description, Image have fallbacks handled in NewHeadViewModel.
-	<meta name="twitter:card" content={ vm.TwitterCardType } />
-	if vm.TwitterSiteHandle != "" {
-	<meta name="twitter:site" content={ vm.TwitterSiteHandle } />
-	}
-	if vm.TwitterCreatorHandle != "" {
-	<meta name="twitter:creator" content={ vm.TwitterCreatorHandle } />
-	}
-	// Twitter URL uses OgURL (which itself falls back to canonical URL if not set)
-	if vm.Metadata.OgURL != "" {
-	// Check OgURL as it's the primary source after fallbacks for social URLs
-	<meta name="twitter:url" content={ vm.Metadata.OgURL } />
-	} else if vm.Metadata.URL != "" {
-	// Fallback directly to canonical if OgURL is somehow empty
-	<meta name="twitter:url" content={ vm.Metadata.URL } />
-	}
-	if vm.Metadata.TwitterTitle != "" {
-	<meta name="twitter:title" content={ vm.Metadata.TwitterTitle } />
-	}
-	if vm.Metadata.TwitterDescription != "" {
-	<meta name="twitter:description" content={ vm.Metadata.TwitterDescription } />
-	}
-	if vm.Metadata.TwitterImage != "" {
-	<meta name="twitter:image" content={ vm.Metadata.TwitterImage } />
-	if vm.Metadata.TwitterImageAlt != "" {
-	<meta name="twitter:image:alt" content={ vm.Metadata.TwitterImageAlt } />
-	}
-	}
-	// --- iOS & Android PWA-like settings ---
-	if vm.Metadata.Title != "" {
-	// Use page title for app title by default
-	<meta name="apple-mobile-web-app-title" content={ vm.Metadata.Title } />
-	}
-	<meta name="apple-mobile-web-app-capable" content="yes" /> // Common default
-	<meta name="mobile-web-app-capable" content="yes" /> // Common default
-	// --- Analytics ---
-	if vm.IsAnalyticsEnabled && vm.MeasuramentID != "" && strings.HasPrefix(vm.MeasuramentID, "G-") {
-	<script async src={ "https://www.googletagmanager.com/gtag/js?id=" + vm.MeasuramentID }></script>
-	<script>
+	<head>
+		<meta charset="UTF-8"/>
+		// Viewport (default is set in Go by NewHeadViewModel)
+		<meta name="viewport" content={ vm.Metadata.ViewPort }/>
+		// Title (essential, should be set via options in Go)
+		if vm.Metadata.Title != "" {
+			<title>{ vm.Metadata.Title }</title>
+		}
+		// Application Name
+		if vm.Name != "" {
+			<meta name="application-name" content={ vm.Name }/>
+		}
+		// Author (optional)
+		if vm.Metadata.Author != "" {
+			<meta name="author" content={ vm.Metadata.Author }/>
+		}
+		// Description (essential, should be set via options in Go)
+		if vm.Metadata.Description != "" {
+			<meta name="description" content={ vm.Metadata.Description }/>
+		}
+		// Keywords (optional)
+		if len(vm.Metadata.Keywords) > 0 {
+			<meta name="keywords" content={ strings.Join(vm.Metadata.Keywords, ", ") }/>
+		}
+		// Referrer Policy
+		<meta name="referrer" content="strict-origin"/> // A common, secure default
+		// Canonical URL (essential, should be set via options in Go)
+		if vm.Metadata.URL != "" {
+			<link rel="canonical" href={ vm.Metadata.URL }/>
+		}
+		// Favicon (optional)
+		if vm.FaviconPath != "" && vm.FaviconType != "" {
+			<link rel="icon" type={ vm.FaviconType } href={ vm.FaviconPath }/>
+		}
+		// Apple Touch Icon (optional)
+		if vm.AppleTouchIconPath != "" {
+			<link rel="apple-touch-icon" href={ vm.AppleTouchIconPath }/>
+		}
+		// Themeing (optional, defaults might be absent or set by OS/browser)
+		if vm.ThemeColor != "" {
+			<meta name="theme-color" content={ vm.ThemeColor }/>
+		}
+		if vm.AppleStatusBarColor != "" {
+			<meta name="apple-mobile-web-app-status-bar-style" content={ vm.AppleStatusBarColor }/>
+		}
+		if vm.ColorScheme != "" {
+			<meta name="color-scheme" content={ vm.ColorScheme }/>
+		}
+		// --- Basic Schema.org itemprop (can supplement JSON-LD) ---
+		if vm.Metadata.Title != "" {
+			<meta itemprop="name" content={ vm.Metadata.Title }/>
+		}
+		if vm.Metadata.Description != "" {
+			<meta itemprop="description" content={ vm.Metadata.Description }/>
+		}
+		if vm.Metadata.SchemaImageURL != "" {
+			<meta itemprop="image" content={ vm.Metadata.SchemaImageURL }/>
+		}
+		// --- Microsoft Specific ---
+		<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+		// MsStartURL has a default ("/") set in NewHeadViewModel
+		<meta name="msapplication-starturl" content={ vm.MsStartURL }/>
+		if vm.Name != "" {
+			// Tooltip defaults to application name
+			<meta name="msapplication-tooltip" content={ vm.Name }/>
+		}
+		if vm.MsTileColor != "" {
+			<meta name="msapplication-TileColor" content={ vm.MsTileColor }/>
+		}
+		if vm.MsBrowserConfigPath != "" {
+			<meta name="msapplication-config" content={ vm.MsBrowserConfigPath }/>
+		}
+		// --- Facebook Open Graph ---
+		// OgType and OgLocale have defaults set in NewHeadViewModel.
+		// OgURL, OgTitle, OgDescription, OgImage have fallbacks handled in NewHeadViewModel.
+		<meta property="og:type" content={ vm.OgType }/>
+		<meta property="og:locale" content={ vm.OgLocale }/>
+		if vm.Metadata.OgURL != "" {
+			<meta property="og:url" content={ vm.Metadata.OgURL }/>
+		}
+		if vm.Metadata.OgTitle != "" {
+			<meta property="og:title" content={ vm.Metadata.OgTitle }/>
+		}
+		if vm.Metadata.OgDescription != "" {
+			<meta property="og:description" content={ vm.Metadata.OgDescription }/>
+		}
+		if vm.Metadata.OgImage != "" {
+			<meta property="og:image" content={ vm.Metadata.OgImage }/>
+			if vm.Metadata.OgImageWidth != "" {
+				<meta property="og:image:width" content={ vm.Metadata.OgImageWidth }/>
+			}
+			if vm.Metadata.OgImageHeight != "" {
+				<meta property="og:image:height" content={ vm.Metadata.OgImageHeight }/>
+			}
+			if vm.Metadata.OgImageAlt != "" {
+				<meta property="og:image:alt" content={ vm.Metadata.OgImageAlt }/>
+			}
+		}
+		if vm.Name != "" {
+			// OG Site Name
+			<meta property="og:site_name" content={ vm.Name }/>
+		}
+		// --- Twitter Card ---
+		// TwitterCardType has a default set in NewHeadViewModel.
+		// Twitter URL, Title, Description, Image have fallbacks handled in NewHeadViewModel.
+		<meta name="twitter:card" content={ vm.TwitterCardType }/>
+		if vm.TwitterSiteHandle != "" {
+			<meta name="twitter:site" content={ vm.TwitterSiteHandle }/>
+		}
+		if vm.TwitterCreatorHandle != "" {
+			<meta name="twitter:creator" content={ vm.TwitterCreatorHandle }/>
+		}
+		// Twitter URL uses OgURL (which itself falls back to canonical URL if not set)
+		if vm.Metadata.OgURL != "" {
+			// Check OgURL as it's the primary source after fallbacks for social URLs
+			<meta name="twitter:url" content={ vm.Metadata.OgURL }/>
+		} else if vm.Metadata.URL != "" {
+			// Fallback directly to canonical if OgURL is somehow empty
+			<meta name="twitter:url" content={ vm.Metadata.URL }/>
+		}
+		if vm.Metadata.TwitterTitle != "" {
+			<meta name="twitter:title" content={ vm.Metadata.TwitterTitle }/>
+		}
+		if vm.Metadata.TwitterDescription != "" {
+			<meta name="twitter:description" content={ vm.Metadata.TwitterDescription }/>
+		}
+		if vm.Metadata.TwitterImage != "" {
+			<meta name="twitter:image" content={ vm.Metadata.TwitterImage }/>
+			if vm.Metadata.TwitterImageAlt != "" {
+				<meta name="twitter:image:alt" content={ vm.Metadata.TwitterImageAlt }/>
+			}
+		}
+		// --- iOS & Android PWA-like settings ---
+		if vm.Metadata.Title != "" {
+			// Use page title for app title by default
+			<meta name="apple-mobile-web-app-title" content={ vm.Metadata.Title }/>
+		}
+		<meta name="apple-mobile-web-app-capable" content="yes"/> // Common default
+		<meta name="mobile-web-app-capable" content="yes"/> // Common default
+		// --- Analytics ---
+		if vm.IsAnalyticsEnabled && vm.MeasuramentID != "" && strings.HasPrefix(vm.MeasuramentID, "G-") {
+			<script async src={ "https://www.googletagmanager.com/gtag/js?id=" + vm.MeasuramentID }></script>
+			<script>
 		{
 			templ.Raw(
 				"window.dataLayer = window.dataLayer || [];\n" +
@@ -156,41 +155,43 @@ templ Head(vm HeadViewModel) {
 			)
 		}
 	</script>
-	}
-	// --- Structured Data (JSON-LD) ---
-	if vm.PreparedJSONLD != "" && vm.PreparedJSONLD != "{}" {
-	// Check if not empty or just an empty object
-	<script type="application/ld+json">
+		}
+		// --- Structured Data (JSON-LD) ---
+		if vm.PreparedJSONLD != "" && vm.PreparedJSONLD != "{}" {
+			// Check if not empty or just an empty object
+			<script type="application/ld+json">
 			{ templ.Raw(vm.PreparedJSONLD) }
 		</script>
-	}
-	// --- Fonts ---
-	// Preconnect to font origins (dynamically determined)
-	// {{ var fontOrigins = make(map[string]bool) }}
-	//if len(vm.Fonts) > 0 {
-	//for _, font := range vm.Fonts {
-	//if strings.HasPrefix(font.Href, "https://fonts.googleapis.com") {
-	//{{
-	//fontOrigins["https://fonts.googleapis.com"] = true // For the CSS file
-	//fontOrigins["https://fonts.gstatic.com"] = true // For the font files themselves
-	//}}
-	//} else if strings.HasPrefix(font.Href, "http") {
-	//// For other external font providers
-	//// Basic origin extraction: scheme://host
-	//parts := strings.SplitN(font.Href, "/", 4) // e.g. "https:", "", "domain.com", "path"
-	//if len(parts) >= 3 {
-	//origin := parts[0] + "//" + parts[2]
-	//fontOrigins[origin] = true
-	//}
-	//}
-	//}
-	//for origin := range fontOrigins {
-	//if origin == "https://fonts.gstatic.com" {
-	//// gstatic often needs crossorigin for fonts
-	//
-	//
-	<link rel="preconnect" href={ origin } crossorigin />
+		}
+		// --- Fonts ---
+		// Preconnect to font origins (dynamically determined)
+		// {{ var fontOrigins = make(map[string]bool) }}
+		//if len(vm.Fonts) > 0 {
+		//for _, font := range vm.Fonts {
+		//if strings.HasPrefix(font.Href, "https://fonts.googleapis.com") {
+		//{{
+		//fontOrigins["https://fonts.googleapis.com"] = true // For the CSS file
+		//fontOrigins["https://fonts.gstatic.com"] = true // For the font files themselves
+		//}}
+		//} else if strings.HasPrefix(font.Href, "http") {
+		//// For other external font providers
+		//// Basic origin extraction: scheme://host
+		//parts := strings.SplitN(font.Href, "/", 4) // e.g. "https:", "", "domain.com", "path"
+		//if len(parts) >= 3 {
+		//origin := parts[0] + "//" + parts[2]
+		//fontOrigins[origin] = true
+		//}
+		//}
+		//}
+		//for origin := range fontOrigins {
+		//if origin == "https://fonts.gstatic.com" {
+		//// gstatic often needs crossorigin for fonts
+		//
+		//
+		//
+		<!-- <link rel="preconnect" href={ origin } crossorigin />
 	//} else {
+	//
 	//
 	//
 	<link rel="preconnect" href={ origin } />
@@ -202,23 +203,41 @@ templ Head(vm HeadViewModel) {
 	//if font.CrossOrigin {
 	//
 	//
+	//
+	{//
+	//
 	<link href={ font.Href } rel="stylesheet" crossorigin />
 	//} else {
 	//
 	//
-	<link href={ font.Href } rel="stylesheet" />
+	//
+	//
+	//
+	<link href={ font.Href } rel="stylesheet" />}
 	//}
 	//}
-	// --- Stylesheets ---
-	for _, style := range vm.Stylesheets {
-	<link href={ style.Href } rel="stylesheet" if style.Media !="" { media={ style.Media } } if style.Integrity !="" {
-		integrity={ style.Integrity } } if style.CrossOrigin !="" { crossorigin={ style.CrossOrigin } } />
-	}
-	// --- Scripts ----
-	/* for _, s := range vm.HeaderScripts {
+	-->
+		// --- Stylesheets ---
+		for _, style := range vm.Stylesheets {
+			<link
+				href={ style.Href }
+				rel="stylesheet"
+				if style.Media !="" {
+					media={ style.Media }
+				}
+				if style.Integrity !="" {
+					integrity={ style.Integrity }
+				}
+				if style.CrossOrigin !="" {
+					crossorigin={ style.CrossOrigin }
+				}
+			/>
+		}
+		// --- Scripts ----
+		/* for _, s := range vm.HeaderScripts {
 	script()
 	} */
-</head>
+	</head>
 }
 
 /* templ script(src string, defer bool, async bool){

@@ -326,7 +326,7 @@ func WithPreparedJSONLD(jsonLD string) Option {
 }
 
 // WithJSONLD marshals the jsonLD object and sets the JSON_LD value.
-func WithJSONLD(jsonLD JsonLD) Option {
+func WithJSONLD(jsonLD JSONLDNode) Option {
 	return func(hvm *HeadViewModel) {}
 }
 
