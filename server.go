@@ -1,4 +1,4 @@
-package server
+package gotth
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/ancalabrese/gotth/views/components/head"
-	"github.com/ancalabrese/gotth/views/page"
+	"github.com/ancalabrese/gotth/views/components/layout"
 )
 
 type StaticAssetFS struct {
@@ -30,6 +30,11 @@ func NewStaticAssetFS(url string, fs http.FileSystem) StaticAssetFS {
 
 // BaseLayoutFunc is the signature for the function/component that wraps page content.
 type BaseLayoutFunc func(headVM head.HeadViewModel, pageContent templ.Component) templ.Component
+
+// ContentProviderFunc is a function that generates page-specific head metadata
+// and content based on the incoming HTTP request.
+// It returns the HeadViewModel, the main content component, and an optional error.
+type ContentProviderFunc func(r *http.Request) (metadata head.HeadViewModel, content templ.Component, err error)
 
 // WebServerConfig holds the config for WebServer
 type WebServerConfig struct {
@@ -84,30 +89,30 @@ func New(cfg WebServerConfig, s *http.Server) (*WebServer, error) {
 	}, nil
 }
 
-// RegisterPage adds a page to be served.
-func (ws *WebServer) RegisterPage(p page.WebPage) {
-	if p.Path == "" || p.ContentProvider == nil {
+// ServeContent adds a page to be served.
+func (ws *WebServer) ServeContent(path string, contentProvider ContentProviderFunc) {
+	if path == "" || contentProvider == nil {
 		fmt.Printf("Skipping registration of page with empty path or no ContentProvider\n")
 		return
 	}
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		headVM, pageContent, err := p.ContentProvider(r)
+		headVM, pageContent, err := contentProvider(r)
 		if err != nil {
 			// TODO: Handle the error appropriately (e.g., log it, show a generic error page)
 			// allow the ContentProviderFunc to also suggest an HTTP status code
-			fmt.Fprintf(os.Stderr, "Error in ContentProvider for %s: %v\n", p.Path, err)
+			fmt.Fprintf(os.Stderr, "Error in ContentProvider for %s: %v\n", path, err)
 			return
 		}
 
 		// Create the full page component by wrapping the page's content with the base layout
-		fullPageComponent := ws.config.Layout(headVM, pageContent)
+		fullPageContent := layout.BasicLayout(headVM, pageContent)
 
 		// Set content type and render
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		err = fullPageComponent.Render(r.Context(), w) // Pass request context
+		err = fullPageContent.Render(r.Context(), w) // Pass request context
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error rendering page %s: %v\n", p.Path, err)
+			fmt.Fprintf(os.Stderr, "Error rendering page %s: %v\n", path, err)
 			// On rendering error return HTTP error. Any other error should be an error message
 			// in the rendered page. TODO: better error handling
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -115,15 +120,8 @@ func (ws *WebServer) RegisterPage(p page.WebPage) {
 		}
 	})
 
-	fmt.Printf("Registering page at path: %s\n", p.Path)
-	ws.mux.Handle(p.Path, handler)
-}
-
-// RegisterPages registers multiple pages.
-func (ws *WebServer) RegisterPages(pages []page.WebPage) {
-	for _, p := range pages {
-		ws.RegisterPage(p)
-	}
+	fmt.Printf("Registering page at path: %s\n", path)
+	ws.mux.Handle(path, handler)
 }
 
 // Start initializes and runs the HTTP server.

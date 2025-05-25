@@ -1,17 +1,12 @@
 GCP_ID:= GOOGLE_CLOUD_PROJECT_ID
 BIN_FOLDER := ./build
-BIN_NAME := BIN_NAME 
+BIN_NAME := example 
 BIN_PATH := $(BIN_FOLDER)/$(BIN_NAME)
-MAIN:= MAIN_FILE_DOT_GO
-MAIN_PATH:= ./$(MAIN)
+MAIN:= main.go
+MAIN_PATH:= ./cmd/$(MAIN)
 
 clean:
 	rm -rf $(BIN_FOLDER)
-
-# Sets the GCP project ID and quota
-project/setup:
-	gcloud config set project $(GCP_ID) 
-	gcloud auth application-default set-quota-project  $(GCP_ID)
 
 # Builds the project
 project/build:
@@ -20,10 +15,6 @@ project/build:
 # Builds and run the executable
 project/run: project/build
 	./$(BIN_PATH)
-
-# Deploys the project to Google App Engine
-project/deploy:
-	gcloud app deploy
 
 # Run air to detect any go file changes to re-build and re-run the server.
 live/server:

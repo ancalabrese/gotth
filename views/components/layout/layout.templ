@@ -5,12 +5,12 @@ import "github.com/ancalabrese/gotth/views/components/head"
 // BasicLayout is the main basic layout for a web page that can be re-used for different
 // webpages of the same site.
 // The children components of BasicLayout should be anything that should go in the page body.
-templ BasicLayout(hm head.HeadViewModel) {
+templ BasicLayout(hm head.HeadViewModel, bodyContent templ.Component) {
 	<!DOCTYPE html>
 	<html class="h-full bg-white scroll-smooth" lang="en" dir="ltr">
 		@head.Head(hm)
 		<body class="h-full" hx-ext="preload" class="min-h-full">
-			{ children... }
+			@bodyContent
 		</body>
 	</html>
 }
