@@ -1,16 +1,24 @@
 package views
 
 templ Home() {
+@home("GOTTHER")
+}
+
+templ HomeWithName(name string) {
+@home(name)
+}
+
+templ home(name string){
 <div
 	class="min-h-screen bg-gradient-to-tr from-sky-900 via-slate-800 to-neutral-900 flex flex-col items-center justify-center p-6 sm:p-4">
 	<div
 		class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-300/30 dark:border-slate-700/50 shadow-2xl rounded-2xl p-8 sm:p-10 md:p-12 text-center max-w-md w-full transform transition-all hover:scale-[1.03] duration-300 ease-out">
-		<img src="/static/gotth.svg" alt="Gotth Logo" class="mx-auto mb-8 h-28 w-auto animate-pulse opacity-90" />
+		<img src="/static/gotth.svg" alt="Gotth Logo" class="mx-auto mb-8 h-28 w-auto animate-pulse-slow" />
 
 		<div class="text-4xl sm:text-5xl font-extrabold">
 			<span
-				class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-500 to-sky-400 dark:from-cyan-400 dark:to-sky-300">
-				HELLO GOTTHER!
+				class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-800 to-sky-500 dark:from-cyan-400 dark:to-sky-300">
+				HELLO {name}!
 			</span>
 		</div>
 		<p class="mt-5 text-slate-600 dark:text-slate-300 text-lg sm:text-xl">
@@ -18,33 +26,10 @@ templ Home() {
 		</p>
 	</div>
 	<p class="text-center text-sm text-slate-400/80 dark:text-slate-500/80 mt-10 tracking-wider">
-		Powered by Gotth & Templ
+		Powered by <a href="https://github.com/ancalabrese/gotth" target="_blank" class="underline">Gotth.</a>
 	</p>
-</div>
-}
-
-templ HomeWithName(name string) {
-<div
-	class="min-h-screen bg-gradient-to-br from-indigo-700 via-purple-600 to-pink-600 flex flex-col items-center justify-center p-6 sm:p-4">
-	<div
-		class="bg-white dark:bg-slate-800 shadow-xl dark:shadow-purple-900/50 rounded-2xl p-8 sm:p-10 md:p-12 text-center max-w-lg w-full transform transition-all hover:shadow-2xl hover:shadow-pink-500/40 dark:hover:shadow-pink-400/30 hover:scale-[1.03] duration-300 ease-out">
-		<div class="group mb-8">
-			<img src="/static/gotth.svg" alt="Gotth Logo"
-				class="mx-auto h-32 w-auto transition-all duration-500 ease-out group-hover:scale-110 group-hover:drop-shadow-[0_5px_15px_rgba(236,72,153,0.4)] group-hover:rotate-[-3deg]" />
-		</div>
-
-		<p class="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-50">
-			HELLO <span
-				class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 dark:from-pink-400 dark:via-red-400 dark:to-orange-400">{
-				name }</span>!
-		</p>
-		<p class="mt-4 text-xl sm:text-2xl font-medium text-slate-700 dark:text-slate-200">
-			YOU ARE A <span
-				class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">GOTTHER</span>!
-		</p>
-	</div>
-	<p class="text-center text-sm text-white/70 dark:text-purple-200/70 mt-10 tracking-wider">
-		Crafted with Gotth & Templ
+	<p class="text-center text-sm text-slate-400/80 dark:text-slate-500/80 mt-10 tracking-wider">
+		Developed with ❤️ by <a href="https://antoniocalabrese.dev" target="_blank" class="underline">Antonio Calabrese.</a>
 	</p>
 </div>
 }

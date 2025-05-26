@@ -57,6 +57,11 @@ func main() {
 
 	webServer.ServeContent("/", func(r *http.Request) (metadata head.HeadViewModel, content templ.Component, err error) {
 		indexHeadVM := head.NewHeadViewModel(
+			head.WithPageCoreMetadata(
+				"Gotth: Get your site online fast | Go + Templ + Tailwind + HTMX",
+				"Get your Go websites online fast with Gotth! Leverages Templ, Tailwind CSS, and HTMX for rapid, SEO-friendly development of modern web applications.",
+				"/index"),
+			head.WithKeywords([]string{"Gotth", "Go web server", "Templ", "Tailwind CSS", "HTMX", "Go templ", "Fast Go websites", "Rapid web development Go", "Go SEO", "Go web starter kit", "Go Tailwind HTMX", "Full-stack Go"}),
 			head.WithFavicon("/static/gotth.svg", "image/png"),
 			head.WithPageCoreMetadata("Sample Home", "Welcome to our sample website built with Gotth!", "/"),
 			head.WithKeywords([]string{"gotth", "sample", "homepage", "go", "templ"}),
