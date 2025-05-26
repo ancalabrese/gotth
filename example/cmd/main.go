@@ -8,7 +8,8 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/ancalabrese/gotth"
-	"github.com/ancalabrese/gotth/example"
+	"github.com/ancalabrese/gotth/example/middleware"
+	"github.com/ancalabrese/gotth/example/views"
 	"github.com/ancalabrese/gotth/views/components/head"
 )
 
@@ -28,14 +29,16 @@ func main() {
 
 	// Static assets for this sample app (e.g., global style.css)
 	appStaticFS := gotth.NewStaticAssetFS(
-		"/static",            // URL path where these assets will be served
-		http.Dir("./static"), // Filesystem path relative to where main.go is run
+		"/static",                  // URL path where these assets will be served
+		http.Dir("./static/dist/"), // Filesystem path relative to where main.go is run
 	)
 
 	cfg := gotth.WebServerConfig{
-		StaticAssetsFS:    []gotth.StaticAssetFS{appStaticFS},
-		Layout:            nil,
-		GlobalMiddlewares: []func(http.Handler) http.Handler{},
+		StaticAssetsFS: []gotth.StaticAssetFS{appStaticFS},
+		Layout:         nil,
+		GlobalMiddlewares: []func(http.Handler) http.Handler{
+			middleware.GottherName,
+		},
 	}
 
 	// Create the underlying http.Server instance
@@ -54,6 +57,7 @@ func main() {
 
 	webServer.ServeContent("/", func(r *http.Request) (metadata head.HeadViewModel, content templ.Component, err error) {
 		indexHeadVM := head.NewHeadViewModel(
+			head.WithFavicon("/static/gotth.svg", "image/png"),
 			head.WithPageCoreMetadata("Sample Home", "Welcome to our sample website built with Gotth!", "/"),
 			head.WithKeywords([]string{"gotth", "sample", "homepage", "go", "templ"}),
 			head.WithOpenGraph(
@@ -61,8 +65,15 @@ func main() {
 				"/", "Sample Home OG Title", "OG description for sample home.",
 				"https://placehold.co/1200x630/0779e4/ffffff?text=Sample+Home", "1200", "630", "Sample homepage OG image",
 			),
+			head.WithStylesheet("/static/style.css", "", "", ""),
 		)
-		content = example.Home()
+
+		name := middleware.GetGettherName(r.Context())
+		if name == "" {
+			content = views.Home()
+		} else {
+			content = views.HomeWithName(name)
+		}
 		return indexHeadVM, content, nil
 	})
 

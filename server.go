@@ -75,10 +75,8 @@ func New(cfg WebServerConfig, s *http.Server) (*WebServer, error) {
 				servePath += "/"
 			}
 
-			stripPath := strings.TrimSuffix(urlPath, "/")
-
-			mux.Handle(servePath, http.StripPrefix(stripPath, http.FileServer(fsConfig.assetFS)))
-			fmt.Printf("Serving static assets from URL path '%s'\n", servePath)
+			mux.Handle(servePath, http.StripPrefix(strings.TrimSuffix(urlPath, "/"), http.FileServer(fsConfig.assetFS)))
+			fmt.Printf("Serving static assets in %s from URL path '%s'\n", fsConfig.assetFS, servePath)
 		}
 	}
 
@@ -135,7 +133,6 @@ func (ws *WebServer) Start(ctx context.Context) error {
 	ws.httpServer.Handler = finalHandler
 
 	fmt.Printf("WebServer starting on %s\n", ws.httpServer.Addr)
-	ws.httpServer.Handler = ws.mux
 
 	errChan := make(chan error, 1)
 	go func() {
