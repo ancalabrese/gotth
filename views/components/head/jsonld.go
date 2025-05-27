@@ -37,15 +37,12 @@ func (n JSONLDNode) MarshalJSON() ([]byte, error) {
 	// Copy properties from the Properties map first
 	if n.Properties != nil {
 		for k, v := range n.Properties {
-			// Avoid overwriting core JSON-LD keywords if they are accidentally in Properties
-			// and also explicitly set on the struct. Explicit struct fields take precedence.
+			// Ignore any potential property that is handled via dedicated field in the JSONLDNode struct.
 			if k != "@context" && k != "@id" && k != "@type" && k != "@graph" {
 				out[k] = v
 			}
 		}
 	}
-
-	// Add/overwrite with explicit fields, applying omitempty-like logic
 
 	// @context
 	if n.Context != nil {
@@ -57,7 +54,7 @@ func (n JSONLDNode) MarshalJSON() ([]byte, error) {
 		// Note: An inline context map or array of contexts could be empty (e.g., {} or []).
 		// The JSON-LD spec says "An inline context SHOULD NOT be empty."
 		// This marshaler will include them if provided and not nil/empty-string.
-		// To omit, ensure n.Context is nil or an empty string.
+		// To omit, n.Context must be nil or an empty string.
 		if include {
 			out["@context"] = n.Context
 		}
