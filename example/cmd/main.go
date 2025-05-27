@@ -35,7 +35,6 @@ func main() {
 
 	cfg := gotth.WebServerConfig{
 		StaticAssetsFS: []gotth.StaticAssetFS{appStaticFS},
-		Layout:         nil,
 		GlobalMiddlewares: []func(http.Handler) http.Handler{
 			middleware.GottherName,
 		},
