@@ -165,63 +165,33 @@ templ Head(vm HeadViewModel) {
 		</script>
 	}
 	// --- Fonts ---
-	// Preconnect to font origins (dynamically determined)
-	// {{ var fontOrigins = make(map[string]bool) }}
-	//if len(vm.Fonts) > 0 {
-	//for _, font := range vm.Fonts {
-	//if strings.HasPrefix(font.Href, "https://fonts.googleapis.com") {
-	//{{
-	//fontOrigins["https://fonts.googleapis.com"] = true // For the CSS file
-	//fontOrigins["https://fonts.gstatic.com"] = true // For the font files themselves
-	//}}
-	//} else if strings.HasPrefix(font.Href, "http") {
-	//// For other external font providers
-	//// Basic origin extraction: scheme://host
-	//parts := strings.SplitN(font.Href, "/", 4) // e.g. "https:", "", "domain.com", "path"
-	//if len(parts) >= 3 {
-	//origin := parts[0] + "//" + parts[2]
-	//fontOrigins[origin] = true
-	//}
-	//}
-	//}
-	//for origin := range fontOrigins {
-	//if origin == "https://fonts.gstatic.com" {
-	//// gstatic often needs crossorigin for fonts
-	//
-	//
-	//
-	<!-- <link rel="preconnect" href={ origin } crossorigin />
-	//} else {
-	//
-	//
-	//
-	<link rel="preconnect" href={ origin } />
-	//}
-	//}
-	//}
-	//// Actual font links
-	//for _, font := range vm.Fonts {
-	//if font.CrossOrigin {
-	//
-	//
-	//
-	{//
-	//
-	<link href={ font.Href } rel="stylesheet" crossorigin />
-	//} else {
-	//
-	//
-	//
-	//
-	//
-	<link href={ font.Href } rel="stylesheet" />}
-	//}
-	//}
-	-->
+	for _, font := range vm.Fonts {
+	@FontPreloadLink(font)
+	}
 	// --- Stylesheets ---
 	for _, style := range vm.Stylesheets {
-	<link href={ style.Href } rel="stylesheet" if style.Media !="" { media={ style.Media } } if style.Integrity !="" {
-		integrity={ style.Integrity } } if style.CrossOrigin !="" { crossorigin={ style.CrossOrigin } } />
+	@StyleSheetLink(style)
+	}
+	// -- Scripts --
+	for _, s := range vm.HeaderScripts {
+	@Script(s)
 	}
 </head>
+}
+
+templ Script(s ScriptLink) {
+<script src={ s.Src } async?={ s.IsAsync } defer?={ s.IsDefer } if s.Type !="" { type={ s.Type } } if s.Integrity !="" {
+	integrity={ s.Integrity } } if s.CrossOrigin !="" { crossorigin={ s.CrossOrigin } }></script>
+}
+
+// StyleSheetLink creates a "link rel=stylesheet" tag
+templ StyleSheetLink(s StylesheetLink) {
+<link rel="stylesheet" href={ s.Href } if s.Media !="" { media={ s.Media } } if s.Integrity !="" { integrity={
+	s.Integrity } } if s.CrossOrigin !="" { crossorigin={ s.CrossOrigin } } />
+}
+
+// FontPreloadLink creates a "link rel="preload" as="font" " tag.
+// If params.CrossOrigin is true, crossorigin="anonymous" is added.
+templ FontPreloadLink(f FontLink) {
+<link rel="preload" as="font" href={ f.Href } if f.CrossOrigin { crossorigin="anonymous" } />
 }
