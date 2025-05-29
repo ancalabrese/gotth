@@ -72,7 +72,7 @@ func main() {
 			head.WithStylesheet("/static/style.css", "", "", ""),
 		)
 
-		name := middleware.GetGettherName(r.Context())
+		name := middleware.GetGottherName(r.Context())
 		if name == "" {
 			content = views.Home()
 		} else {
