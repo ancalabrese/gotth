@@ -1,6 +1,11 @@
 // Package head provides view models and components for HTML head section.
 package head
 
+import (
+	"encoding/json"
+	"log"
+)
+
 // HeadViewModel is the primary model for the Head templ component.
 // Instantiate via NewHeadViewModel and functional options.
 type HeadViewModel struct {
@@ -357,8 +362,18 @@ func WithPreparedJSONLD(jsonLD string) Option {
 }
 
 // WithJSONLD marshals the jsonLD object and sets the JSON_LD value.
-func WithJSONLD(jsonLD JSONLDNode) Option {
-	return func(hvm *HeadViewModel) {}
+func WithJSONLD(jsonLDNode JSONLDNode) Option {
+	return func(vm *HeadViewModel) {
+		jsonData, err := json.Marshal(jsonLDNode)
+		if err != nil {
+			// //TODO: Handle error: log it, or perhaps set an error state in the ViewModel
+			// For now, logging and not setting.
+			log.Printf("Error marshaling JSON-LD: %v", err)
+			vm.PreparedJSONLD = ""
+			return
+		}
+		vm.PreparedJSONLD = string(jsonData)
+	}
 }
 
 // WithFont adds a font link to the list of fonts.

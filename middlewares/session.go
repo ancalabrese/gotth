@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	SESSION_COOKIE_NAME = "session_id"
-	UserValueKey        = "gotth_user_key"
+	SESSION_COOKIE_NAME                    = "session_id"
+	UserKey             contextUserKeyType = "gotth_user_key"
 )
+
+type contextUserKeyType string
 
 type SessionStore interface {
 	// ExchangeSessionIDForUser returns the user object that corresponds to the sessionID
@@ -59,7 +61,7 @@ func SessionCheck(ss SessionStore, isSessionIDRequired bool, onError func(http.R
 				return
 			}
 
-			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), UserValueKey, user)))
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), UserKey, user)))
 		})
 	}
 }
@@ -107,5 +109,5 @@ func InvalidateSession(ss SessionStore, onError func(http.ResponseWriter, *http.
 }
 
 func GetUser(ctx context.Context) any {
-	return ctx.Value(UserValueKey)
+	return ctx.Value(UserKey)
 }

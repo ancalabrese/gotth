@@ -270,7 +270,7 @@ func TestInvalidateSession(t *testing.T) {
 			sessionStore: &mockSessionStore{}, // No error on Invalidate
 			requestSetup: func(r *http.Request) {
 				r.AddCookie(&http.Cookie{Name: middlewares.SESSION_COOKIE_NAME, Value: "session_to_invalidate"})
-				ctxWithUser := context.WithValue(r.Context(), middlewares.UserValueKey, sampleUser)
+				ctxWithUser := context.WithValue(r.Context(), middlewares.UserKey, sampleUser)
 				*r = *r.WithContext(ctxWithUser)
 			},
 			expectedOnErrorCalled:       false,
@@ -302,7 +302,7 @@ func TestInvalidateSession(t *testing.T) {
 			sessionStore: &mockSessionStore{InvalidateError: errSessionStoreInvalidate},
 			requestSetup: func(r *http.Request) {
 				r.AddCookie(&http.Cookie{Name: middlewares.SESSION_COOKIE_NAME, Value: "session_store_fail"})
-				ctxWithUser := context.WithValue(r.Context(), middlewares.UserValueKey, sampleUser)
+				ctxWithUser := context.WithValue(r.Context(), middlewares.UserKey, sampleUser)
 				*r = *r.WithContext(ctxWithUser)
 			},
 			expectedOnErrorCalled:  true,
