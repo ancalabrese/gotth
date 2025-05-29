@@ -1,6 +1,7 @@
 package head
 
 import "strings"
+import "github.com/ancalabrese/gotth/views/components/analytics"
 
 templ Head(vm HeadViewModel) {
 
@@ -145,17 +146,7 @@ templ Head(vm HeadViewModel) {
 	<meta name="mobile-web-app-capable" content="yes" /> // Common default
 	// --- Analytics ---
 	if vm.IsAnalyticsEnabled && vm.MeasuramentID != "" && strings.HasPrefix(vm.MeasuramentID, "G-") {
-	<script async src={ "https://www.googletagmanager.com/gtag/js?id=" + vm.MeasuramentID }></script>
-	<script>
-		{
-			templ.Raw(
-				"window.dataLayer = window.dataLayer || [];\n" +
-				"function gtag(){dataLayer.push(arguments);}\n" +
-				"gtag('js', new Date());\n" +
-				"gtag('config', '" + vm.MeasuramentID + "');",
-			)
-		}
-	</script>
+	@analytics.GAnalytics(vm.MeasuramentID)
 	}
 	// --- Structured Data (JSON-LD) ---
 	if vm.PreparedJSONLD != "" && vm.PreparedJSONLD != "{}" {

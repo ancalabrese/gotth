@@ -1,4 +1,33 @@
 package analytics
 
-templ Google() {
+var analyticsHandle = templ.NewOnceHandle()
+
+const (
+url = "https://www.googletagmanager.com/gtag/js?id="
+)
+
+templ GAnalytics(gtag string) {
+<script async src={ url + gtag }></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() {dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-YB0V3H4JDT');
+
+	function reportEvent(requestedResource) {
+		const currentPath = window.location.pathname;
+		gtag('event', 'click', {
+			'event_category': 'UI Interaction',
+			'event_action': 'Click',
+			'page_path': currentPath,
+			'request_path': requestedResource,
+		});
+	}
+
+	// Report any action that triggers an HTMX request 
+	//TODO: this assumes HTMX is enabled. HTMX is optional
+	htmx.on("htmx:beforeRequest", function (evt) {
+		reportEvent(evt.detail.pathInfo.finalRequestPath);
+	});
+</script>
 }
