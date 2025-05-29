@@ -36,14 +36,6 @@ type HeadViewModel struct {
 	AppleStatusBarColor string // Status bar style for iOS web apps (e.g., "black-translucent")
 	ColorScheme         string // Supported color schemes (e.g., "light dark")
 
-	// Common JavaScript Libraries (Booleans for inclusion, Paths for location)
-	IncludeHTMX        bool
-	HTMXPath           string // Defaults to a common CDN or local path
-	IncludeHTMXPreload bool
-	HTMXPreloadPath    string // Defaults to a common CDN or local path
-	IncludeAlpineJS    bool
-	AlpineJSPath       string // Defaults to a common CDN or local path
-
 	// Custom Assets
 	Fonts         []FontLink       // List of fonts to link
 	Stylesheets   []StylesheetLink // List of CSS stylesheets
@@ -132,10 +124,6 @@ func NewHeadViewModel(opts ...Option) HeadViewModel {
 		OgType:          "website",
 		OgLocale:        "en_US",
 		TwitterCardType: "summary_large_image",
-		// Default JS library paths (can be overridden by options)
-		HTMXPath:        "/static/js/htmx.min.js",
-		HTMXPreloadPath: "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js",
-		AlpineJSPath:    "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js",
 		CustomMetaTags:  make(map[string]string),
 	}
 
@@ -312,6 +300,49 @@ func WithThemeing(themeColor, appleStatusColor, colorScheme string) Option {
 	}
 }
 
+// WithHTMX configures the HTMX script tag. If endpoint is empty, it defaults to the CDN address.
+func WithHTMX(endpoint string) Option {
+	return func(hvm *HeadViewModel) {
+		scriptLink := ScriptLink{}
+		if endpoint == "" {
+			scriptLink.Src = "https://unpkg.com/htmx.org@2.0.4"
+			scriptLink.CrossOrigin = "anonymous"
+			scriptLink.Integrity = "sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+		} else {
+			scriptLink.Src = endpoint
+		}
+		hvm.HeaderScripts = append(hvm.HeaderScripts, scriptLink)
+	}
+}
+
+// WithHTMXPreloadExt configures the preload HTMX extension
+func WithHTMXPreloadExt(endpoint string) Option {
+	return func(hvm *HeadViewModel) {
+		scriptLink := ScriptLink{}
+		if endpoint == "" {
+			scriptLink.Src = "https://unpkg.com/htmx-ext-preload@2.1.0"
+			scriptLink.CrossOrigin = "anonymous"
+			scriptLink.Integrity = "sha384-fkzubQiTB69M7XTToqW6tplvxAOJkqPl5JmLAbumV2EacmuJb8xEP9KnJafk/rg8"
+		} else {
+			scriptLink.Src = endpoint
+		}
+		hvm.HeaderScripts = append(hvm.HeaderScripts, scriptLink)
+	}
+}
+
+// WithAlpine configures Alpine
+func WithAlpine(endpoint string) Option {
+	return func(hvm *HeadViewModel) {
+		scriptLink := ScriptLink{}
+		if endpoint == "" {
+			scriptLink.Src = "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+		} else {
+			scriptLink.Src = endpoint
+		}
+		hvm.HeaderScripts = append(hvm.HeaderScripts, scriptLink)
+	}
+}
+
 // WithAnalytics enables or disables analytics and sets the measurement ID.
 func WithAnalytics(enabled bool, measurementID string) Option {
 	return func(vm *HeadViewModel) {
@@ -352,30 +383,6 @@ func WithHeaderScript(src string, isAsync, isDefer bool, scriptType, integrity, 
 		vm.HeaderScripts = append(vm.HeaderScripts, ScriptLink{
 			Src: src, IsAsync: isAsync, IsDefer: isDefer, Type: scriptType, Integrity: integrity, CrossOrigin: crossOrigin,
 		})
-	}
-}
-
-// WithCommonLibInclusion flags whether to include common JS libraries.
-func WithCommonLibInclusion(includeHTMX, includeHTMXPreload, includeAlpine bool) Option {
-	return func(vm *HeadViewModel) {
-		vm.IncludeHTMX = includeHTMX
-		vm.IncludeHTMXPreload = includeHTMXPreload
-		vm.IncludeAlpineJS = includeAlpine
-	}
-}
-
-// WithCommonLibPaths overrides default paths for common JS libraries.
-func WithCommonLibPaths(htmxPath, htmxPreloadPath, alpinePath string) Option {
-	return func(vm *HeadViewModel) {
-		if htmxPath != "" {
-			vm.HTMXPath = htmxPath
-		}
-		if htmxPreloadPath != "" {
-			vm.HTMXPreloadPath = htmxPreloadPath
-		}
-		if alpinePath != "" {
-			vm.AlpineJSPath = alpinePath
-		}
 	}
 }
 
