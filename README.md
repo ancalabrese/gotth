@@ -5,6 +5,9 @@
 
 "Ship fast, fail fast" - As we all know.
 
+## Example page
+[Check it out](https://ancalabrese.github.io/gotth)
+
 ## Core Features
 
 * **`gotth.WebServer`: Your Web Server Foundation**:
@@ -58,6 +61,7 @@
         * How to write a `ContentProviderFunc`.
         * Using `HeadViewModel`.
         * Adding custom middleware.
+    * Site visbile [here](https://ancalabrese.github.io/gotth)
 
 ## Getting Started
 
